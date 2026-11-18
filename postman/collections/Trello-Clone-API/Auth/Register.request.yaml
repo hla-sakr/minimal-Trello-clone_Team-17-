@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Nat\",\r
+
+    \  \"email\": \"natalie@test.com\",\r
+
+    \  \"password\": \"abc12345\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const res = pm.response.json();\r
+
+      \r
+
+      if (res.data && res.data.token) {\r
+
+      \    pm.collectionVariables.set(\"token\", res.data.token);\r
+
+      }"
+    language: text/javascript
+order: 1000

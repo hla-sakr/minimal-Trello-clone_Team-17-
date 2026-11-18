@@ -3,6 +3,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js"; //Imports the User model we defined in models/User.js
 import generateToken from "../utils/token.js";//Imports the function responsible for generating JWT tokens
+import { isEmail, passwordError } from "../utils/Email&Pass_validators.js"; //Imports the functions responsible for validating email and password
 
 /**
  * Defines a function that receives a "user" object
@@ -26,17 +27,25 @@ function cleanUser(user) {
 
 //POST /api/auth/register
 export async function register(req, res) {
-  const { name, email, password } = req.body;
+  const { name, email, password } = req.body || {};
 
   //checks if any required field is missing or empty
   if (!name || !email || !password) {
     return res.status(400).json({ success: false, message: "Name, email and password cannot be empty" });
   }
+  
+  //checks if the "name" is a string, not empty, and does not exceed 50 characters
+  if (typeof name !== "string" || !name.trim() || name.length > 50)
+    return res.status(400).json({ success: false, message: "Name is required (max 50 characters)" });
 
-  //checks if the password contains less than 6 characters
-  if (password.length < 6) {
-    return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
-  }
+  //use the isEmail function to validate the email format
+  if (!isEmail(email))
+    return res.status(400).json({ success: false, message: "Please enter a valid email" });
+
+  //use the passwordError function to validate the password format
+  const pwError = passwordError(password);
+  if (pwError)
+    return res.status(400).json({ success: false, message: pwError });
 
   //checks if the email is already in use
   const exists = await User.findOne({ email: email.toLowerCase() });

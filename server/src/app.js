@@ -31,11 +31,27 @@ app.use((req, res) => {
 
 // Error handler (keeps the { success, message } format)
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Server error",
-  });
+  let status = err.status || 500;
+  let message = err.message;
+
+  if (err.code === 11000) { //duplicate key (e.g. email)
+    status = 400;
+    message = "Email already exists";
+  } 
+  else if (err.name === "ValidationError") {   //Mongoose rules broken
+    status = 400;
+    message = Object.values(err.errors).map((e) => e.message).join(", ");
+  } 
+  else if (err.name === "CastError") {    //bad id like /boards/123
+    status = 400;
+    message = "Invalid id";
+  }
+
+  if (status === 500) {
+    console.error(err);  // log the real error for you
+    message = "Server error";  //but don't leak details to users
+  }
+  res.status(status).json({ success: false, message });
 });
 
 export default app;

@@ -19,7 +19,6 @@ export async function auth(req, res, next) {
   try {
     //2. Check the token is real and not expired
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     //3. Find the user it belongs to
     const user = await User.findById(decoded.id);
     if (!user) {
