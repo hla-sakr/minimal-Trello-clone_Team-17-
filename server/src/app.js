@@ -1,7 +1,9 @@
 /*Configure the Express application and connect all the routes and middleware*/
+
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 //Creates an Express application instance
 const app = express();
@@ -11,7 +13,7 @@ app.use(cors({
 }));
 
 //express.json() parses the incoming JSON 
-//and makes the result available as a JavaScript object.
+//and makes the result available as a JavaScript object
 app.use(express.json());
 
 //a simple GET endpoint to check whether the backend is running
@@ -23,6 +25,8 @@ app.get("/api/health", (req, res) => {
 
 //this means every route defined inside authRoutes.js starts with /api/auth
 app.use("/api/auth", authRoutes);
+//this means every route defined inside userRoutes.js starts with /api/users
+app.use("/api/users", userRoutes);
 
 //404 for unknown routes
 app.use((req, res) => {

@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-//Connecting to a database requires communicating with another process or server.
+//Connecting to a database requires communicating with another process or server
 //Instead of blocking the entire application while waiting, JavaScript can continue handling other work.
 //async and await to handle these operations.
 export default async function connectDB() {
