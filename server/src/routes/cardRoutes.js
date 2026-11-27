@@ -9,7 +9,7 @@ import {
   moveCard
 } from "../controllers/cardController.js";
 
-import { auth } from "../middleware/auth.js";
+import { auth } from "../middleware/authToken.js";
 
 // Create Express router
 const router = Router();
