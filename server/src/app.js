@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import boardRoutes from "./routes/boardRoutes.js"; // Added by hla 
 
 //Creates an Express application instance
 const app = express();
@@ -23,6 +24,9 @@ app.get("/api/health", (req, res) => {
 
 //this means every route defined inside authRoutes.js starts with /api/auth
 app.use("/api/auth", authRoutes);
+
+//It tells Express to use boardRoutes whenever an incoming request starts with /api/boards
+app.use("/api/boards", boardRoutes); // Added by hla
 
 //404 for unknown routes
 app.use((req, res) => {
