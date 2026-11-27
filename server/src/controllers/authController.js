@@ -1,24 +1,10 @@
-/*Handle the actual authentication operations*/
+/*Handle the actual authentication login / register / return user operations*/
 
 import bcrypt from "bcryptjs";
 import User from "../models/User.js"; //Imports the User model we defined in models/User.js
 import generateToken from "../utils/token.js";//Imports the function responsible for generating JWT tokens
 import { isEmail, passwordError } from "../utils/Email&Pass_validators.js"; //Imports the functions responsible for validating email and password
-
-/**
- * Defines a function that receives a "user" object
- * Our database "user" contains sensitive information,
- * especially the password hash
- * We don't want to send that information to the frontend
- */
-function cleanUser(user) {
-  return {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar,
-  };
-}
+import cleanUser from "../utils/CleanUser.js";//Imports the function responsible for cleaning the user object before sending it to the frontend
 
 /**
  * req contains information sent by the frontend.
@@ -38,11 +24,11 @@ export async function register(req, res) {
   if (typeof name !== "string" || !name.trim() || name.length > 50)
     return res.status(400).json({ success: false, message: "Name is required (max 50 characters)" });
 
-  //use the isEmail function to validate the email format
+  //use the isEmail function in Email&Pass_validators.js to validate the email format
   if (!isEmail(email))
     return res.status(400).json({ success: false, message: "Please enter a valid email" });
 
-  //use the passwordError function to validate the password format
+  //use the passwordError function in Email&Pass_validators.js to validate the password format
   const pwError = passwordError(password);
   if (pwError)
     return res.status(400).json({ success: false, message: pwError });
@@ -62,7 +48,7 @@ export async function register(req, res) {
     passwordHash: passwordHash
   });
 
-  //Indicates the operation succeeded and returning the user to the frontend
+  //Indicates the operation succeeded and returning the user & token to the frontend
   res.status(201).json({
     success: true,
     data: {
