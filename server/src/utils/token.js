@@ -5,11 +5,15 @@
 import jwt from "jsonwebtoken";
 
 export default function generateToken(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(
+    { id: userId },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
 }
 
 // -> later:
 // const data = jwt.verify(token, process.env.JWT_SECRET); // → { id: "abc123", ... }
 
-// sign creates the token. 
+// sign creates the token.
 // verify checks it wasn’t changed and hasn’t expired. If it fails, it throws an error.

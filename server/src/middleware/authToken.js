@@ -1,4 +1,5 @@
 /*Protect routes by checking whether the requester has a valid JWT token*/
+
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 //Imports the User model because after verifying a token,
@@ -27,9 +28,9 @@ export async function auth(req, res, next) {
 
     //4.Attach the user so later code can use req.user
     req.user = user;
-
     //5. Call next() allow the request to continue
     next();
+    
   } catch (err) {
     return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
