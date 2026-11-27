@@ -8,7 +8,8 @@ import {
   moveList
 } from "../controllers/listController.js";
 
-import { auth } from "../middleware/auth.js";
+// import { auth } from "../middleware/auth.js";
+import { auth } from "../middleware/authToken.js";
 
 const router = express.Router();
 
