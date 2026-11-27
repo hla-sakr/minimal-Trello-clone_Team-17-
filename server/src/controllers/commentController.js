@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Comment from "../models/Comment.js";
+
 import Card from "../models/Card.js";
 
 // POST /api/cards/:cardId/comments

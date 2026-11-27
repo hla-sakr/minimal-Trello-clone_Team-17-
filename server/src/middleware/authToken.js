@@ -1,5 +1,7 @@
 /*Protect routes by checking whether the requester has a valid JWT token*/
 
+//who is making this request, and are they logged in?
+
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 //Imports the User model because after verifying a token,

@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 //Creates an Express application instance
 const app = express();
@@ -57,5 +58,8 @@ app.use((err, req, res, next) => {
   }
   res.status(status).json({ success: false, message });
 });
+
+
+app.use("/api", commentRoutes); //for routing comments
 
 export default app;
