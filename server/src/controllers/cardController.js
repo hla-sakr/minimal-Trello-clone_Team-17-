@@ -237,3 +237,107 @@ export async function deleteCard(req, res) {
   });
 }
 
+
+
+
+
+
+
+
+// Fifth part
+// PUT /api/cards/:id/move
+export async function moveCard(req, res) {
+
+  // Extract request information<position is given by the front end and calc part will be later lesa>
+  const { id } = req.params;
+  const { toListId, position } = req.body || {};
+
+// Check whether another card occupies the requested position
+//seach 3la card 3ndha same destination list, w same requested position bas <$ne:> means not equal to the current card's ID
+const occupiedPosition = await Card.findOne({
+  list: destinationList._id,
+  position: position,
+  _id: { $ne: card._id }
+});
+
+if (occupiedPosition) {
+  return res.status(409).json({
+    success: false,
+    message: "Card position is already occupied"
+  });
+}
+
+
+  // Validate card ID
+  if (!mongoose.isObjectIdOrHexString(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid card id"
+    });
+  }
+
+  // Validate destination list ID
+  if (!mongoose.isObjectIdOrHexString(toListId)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid destination list id"
+    });
+  }
+
+  // Validate position
+  //Checks whether the position is an actual number and is not infinite or NaN (Not a Number)
+  if (!Number.isFinite(position)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid card position"
+    });
+  }
+
+  // Find the existing card
+  const card = await Card.findById(id);
+
+  if (!card) {
+    return res.status(404).json({
+      success: false,
+      message: "Card not found"
+    });
+  }
+
+  // Check board membership
+  await getBoardForMember(card.board, req.user._id);
+
+  // Retrieve the registered List model<not implemented lesa hattzbt>
+  const List = mongoose.model("List");
+
+  // Find the destination list
+  const destinationList = await List.findById(toListId);
+
+  // Check if the destination list exists
+  if (!destinationList) {
+    return res.status(404).json({
+      success: false,
+      message: "Destination list not found"
+    });
+  }
+
+  // Check that both belong to the same board
+  if (!destinationList.board.equals(card.board)) {
+    return res.status(400).json({
+      success: false,
+      message: "Cannot move card to another board"
+    });
+  }
+
+  // Update card location and position
+  card.list = destinationList._id;
+  card.position = position;
+
+  // Save changes to MongoDB
+  await card.save();
+
+  // Return the updated card
+  return res.status(200).json({
+    success: true,
+    data: card
+  });
+}
