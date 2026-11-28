@@ -16,8 +16,9 @@
  *  .trim() removes spaces from the beginning and end of the text.
  */
 export function isEmail(v) {
-    return typeof v === "string" && v.length <= 254 &&
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+    return typeof v === "string"
+        && v.length <= 254
+        && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
 
 /***
@@ -32,7 +33,7 @@ export function isEmail(v) {
 export function passwordError(p) {
     if (typeof p !== "string") return "Password is required";
     if (p.length < 8) return "Password must be at least 8 characters";
-    if (Buffer.byteLength(p) > 72) return "Password is too long"; 
+    if (Buffer.byteLength(p) > 72) return "Password is too long";
     if (!/[A-Za-z]/.test(p) || !/\d/.test(p))
         return "Password must include a letter and a number";
     return null;
