@@ -6,7 +6,7 @@ import app from "./app.js";//Imports the Express application we configured in ap
 import connectDB from "./config/db.js";//Imports the function that connects to MongoDB
 
 const PORT = process.env.PORT || 5000;
-const server = http.createServer(app); // we need this for Socket.IO later
+const server = http.createServer(app); //we need this for Socket.IO later
 
 //Calls the database connection function
 await connectDB();

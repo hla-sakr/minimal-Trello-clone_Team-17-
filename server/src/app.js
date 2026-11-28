@@ -1,8 +1,12 @@
 /*Configure the Express application and connect all the routes and middleware*/
+
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import boardRoutes from "./routes/boardRoutes.js"; // Added by hla 
+import cardDetailsRoutes from "./routes/cardDetailsRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 //Creates an Express application instance
 const app = express();
@@ -12,7 +16,7 @@ app.use(cors({
 }));
 
 //express.json() parses the incoming JSON 
-//and makes the result available as a JavaScript object.
+//and makes the result available as a JavaScript object
 app.use(express.json());
 
 //a simple GET endpoint to check whether the backend is running
@@ -27,7 +31,11 @@ app.use("/api/auth", authRoutes);
 
 //It tells Express to use boardRoutes whenever an incoming request starts with /api/boards
 app.use("/api/boards", boardRoutes); // Added by hla
+//this means every route defined inside userRoutes.js starts with /api/users
+app.use("/api/users", userRoutes);
 
+//this means every route defined inside cardDetailsRoutes.js starts with /api
+app.use("/api", cardDetailsRoutes);
 //404 for unknown routes
 app.use((req, res) => {
   res.status(404).json({ success: false, message: "URL not found" });
@@ -41,11 +49,11 @@ app.use((err, req, res, next) => {
   if (err.code === 11000) { //duplicate key (e.g. email)
     status = 400;
     message = "Email already exists";
-  } 
+  }
   else if (err.name === "ValidationError") {   //Mongoose rules broken
     status = 400;
     message = Object.values(err.errors).map((e) => e.message).join(", ");
-  } 
+  }
   else if (err.name === "CastError") {    //bad id like /boards/123
     status = 400;
     message = "Invalid id";
@@ -57,5 +65,8 @@ app.use((err, req, res, next) => {
   }
   res.status(status).json({ success: false, message });
 });
+
+
+app.use("/api", commentRoutes); //for routing comments
 
 export default app;
