@@ -3,6 +3,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import cardDetailsRoutes from "./routes/cardDetailsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 
@@ -29,6 +30,8 @@ app.use("/api/auth", authRoutes);
 //this means every route defined inside userRoutes.js starts with /api/users
 app.use("/api/users", userRoutes);
 
+//this means every route defined inside cardDetailsRoutes.js starts with /api
+app.use("/api", cardDetailsRoutes);
 //404 for unknown routes
 app.use((req, res) => {
   res.status(404).json({ success: false, message: "URL not found" });
@@ -42,11 +45,11 @@ app.use((err, req, res, next) => {
   if (err.code === 11000) { //duplicate key (e.g. email)
     status = 400;
     message = "Email already exists";
-  } 
+  }
   else if (err.name === "ValidationError") {   //Mongoose rules broken
     status = 400;
     message = Object.values(err.errors).map((e) => e.message).join(", ");
-  } 
+  }
   else if (err.name === "CastError") {    //bad id like /boards/123
     status = 400;
     message = "Invalid id";
